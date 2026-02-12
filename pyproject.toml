@@ -1,0 +1,16 @@
+[project]
+name = "Kafka-Debezium-Hello-World"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.12,<4.0"
+
+dependencies = [
+    "kafka-python>=2.3.0",
+    "psycopg2-binary>=2.9.11",
+    "requests>=2.32.5",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pipdeptree==2.26.1",
+]

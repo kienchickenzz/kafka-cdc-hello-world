@@ -1,0 +1,46 @@
+services:
+    postgres:
+        container_name: postgres_db
+        image: postgres:16
+        ports:
+        - "5432:5432"
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: Pa55w.rd
+            POSTGRES_DB: db
+        command:
+        - "postgres"
+        - "-c"
+        - "wal_level=logical"
+        - "-c"
+        - "max_wal_senders=4"
+        - "-c"
+        - "max_replication_slots=4"
+        volumes:
+        - ./volumes/postgres:/var/lib/postgresql/data
+        - ./volumes/postgres_bootstrap:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U root -d db"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+        networks:
+        - kafka-net
+
+    kafka-ui:
+        container_name: kafka-ui
+        image: provectuslabs/kafka-ui:latest
+        ports:
+        - "8080:8080"
+        environment:
+            KAFKA_CLUSTERS_0_NAME: local
+            KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: host.docker.internal:29092
+        networks:
+        - kafka-net
+        extra_hosts:
+        - "host.docker.internal:host-gateway"
+
+networks:
+    kafka-net:
+        driver: bridge
